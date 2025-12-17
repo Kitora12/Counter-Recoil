@@ -89,3 +89,6 @@ shoot=LButton
 ExitKey=End
 ```
 
+### Disclaimer
+
+This cheat is provided for educational purposes only. Use it at your own risk and do not use it in official game environments.
