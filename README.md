@@ -1,6 +1,10 @@
+<p align="center">
+  <img src="assets/logo.png" alt="Counter Recoil logo" width="220">
+</p>
+
 # Counter Recoil
 
-A simple AutoHotkey script to load and run recoil patterns using configurable profiles and hotkeys.
+A simple AutoHotkey No Recoil for CS2 using configurable profiles and hotkeys.
 
 > ⚠️ **Work in Progress**
 
@@ -89,6 +93,6 @@ shoot=LButton
 ExitKey=End
 ```
 
-### Disclaimer
+## Disclaimer
 
 This cheat is provided for educational purposes only. Use it at your own risk and do not use it in official game environments.
