@@ -3,21 +3,19 @@
 global UI := unset
 global UIc := Map()
 
-; WM_LBUTTONDOWN = 0x0201
 OnMessage(0x0201, UI_WM_LBUTTONDOWN)
-; WM_LBUTTONDBLCLK = 0x0203
 OnMessage(0x0203, UI_WM_LBUTTONDBLCLK)
 
 UI_Create() {
   global UI, UIc
 
-  UI := Gui("-Caption +AlwaysOnTop +ToolWindow", "Counter")
-  UI.BackColor := "202225"
+  UI := Gui("-Caption +AlwaysOnTop +ToolWindow", "Counter Recoil")
+  UI.BackColor := "121619"
   UI.SetFont("s9 cFFFFFF", "Segoe UI")
   UI.MarginX := 12
   UI.MarginY := 10
 
-  UIc["Title"] := UI.AddText("w260", "Counter")
+  UIc["Title"] := UI.AddText("w260", "Counter Recoil")
   UIc["Title"].SetFont("s10 bold")
 
   UIc["Status"] := UI.AddText("w260 y+6", "")
@@ -39,7 +37,7 @@ UI_WM_LBUTTONDOWN(wParam, lParam, msg, hwnd) {
   if (hwnd != UI.Hwnd)
     return
 
-  PostMessage(0xA1, 2, 0, , "ahk_id " hwnd)  ; WM_NCLBUTTONDOWN, HTCAPTION
+  PostMessage(0xA1, 2, 0, , "ahk_id " hwnd)
 }
 
 UI_WM_LBUTTONDBLCLK(wParam, lParam, msg, hwnd) {
@@ -58,11 +56,11 @@ UI_Update() {
     return
 
   enabled := State["Enabled"]
-  weapon := State["ActiveWeapon"]
+  weaponId := State["ActiveWeapon"]
+  weaponName := (weaponId = "Off") ? "Off" : Profiles_DisplayName(weaponId)
   size := StrLen(State["ActiveProfile"])
 
-  UIc["Status"].Text := (enabled ? "ON" : "OFF") "  •  " weapon
-  UIc["Profile"].Text := "Profile: " size " chars"
+  UIc["Status"].Text := (enabled ? "ON" : "OFF") "  -  " weaponName
 
   if enabled
     UIc["Status"].SetFont("c7CFC00")
