@@ -3,7 +3,6 @@ global BoundHotkeys := []
 Bindings_Apply() {
   global State, BoundHotkeys
 
-  ; Désactive les anciens hotkeys
   for hk in BoundHotkeys
     Hotkey(hk, "Off")
   BoundHotkeys := []
@@ -11,13 +10,11 @@ Bindings_Apply() {
   config := A_ScriptDir "\config\config.ini"
   mouse  := A_ScriptDir "\config\mouse.ini"
 
-  ; Settings
   State["Sens"] := Number(IniGet(config, "Settings", "sens", "1.0"))
   State["ZoomSens"] := Number(IniGet(config, "Settings", "zoomsens", "1.0"))
   State["Smoothness"] := 0.7
   State["Modifier"] := 2.52 / Max(0.01, State["Sens"])
 
-  ; Armes w1..w9
   Loop 9 {
     weaponId := "w" A_Index
     key := IniGet(config, "KeyBinds", weaponId)
@@ -27,21 +24,18 @@ Bindings_Apply() {
     }
   }
 
-  ; Off
   offKey := IniGet(config, "KeyBinds", "Off")
   if (offKey != "") {
     Hotkey(offKey, (*) => SetWeapon("Off"))
     BoundHotkeys.Push(offKey)
   }
 
-  ; Pause / enable
   pauseKey := IniGet(mouse, "Controls", "PauseKey")
   if (pauseKey != "") {
     Hotkey(pauseKey, ToggleEnabled)
     BoundHotkeys.Push(pauseKey)
   }
 
-  ; Shoot (Down / Up)
   shootKey := IniGet(mouse, "Controls", "shoot")
   if (shootKey != "") {
     hkDown := "~*" shootKey
@@ -52,6 +46,13 @@ Bindings_Apply() {
 
     BoundHotkeys.Push(hkDown)
     BoundHotkeys.Push(hkUp)
+  }
+
+  exitKey := Trim(IniGet(mouse, "Controls", "ExitKey", ""))
+  if (exitKey != "") {
+    hk := "*" exitKey
+    Hotkey(hk, App_Exit)
+    BoundHotkeys.Push(hk)
   }
 }
 
@@ -65,12 +66,15 @@ SetWeapon(weaponId, *) {
   UI_Update()
 }
 
+App_Exit(*) {
+  TrayTip("Counter", "Exiting...", 1)
+  ExitApp
+}
 
 ToggleEnabled(*) {
   global State
   State["Enabled"] := !State["Enabled"]
 
-  ; stop immédiat du run en cours
   if !State["Enabled"]
     State["Shooting"] := false
 
