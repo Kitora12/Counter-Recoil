@@ -1,8 +1,44 @@
 Profiles_Load(weaponId) {
-  path := A_ScriptDir "\profiles\" weaponId ".profile"
+  config := A_ScriptDir "\config\config.ini"
+
+  profileName := Trim(IniGet(config, "Profiles", weaponId, weaponId))
+  if (profileName = "")
+    profileName := weaponId
+
+  path := A_ScriptDir "\profiles\" profileName ".profile"
+
   if !FileExist(path)
     return ""
+
   return FileRead(path, "UTF-8")
+}
+
+Profiles_DisplayName(weaponId) {
+  config := A_ScriptDir "\config\config.ini"
+
+  try {
+    section := IniRead(config, "Profiles")
+  } catch {
+    return weaponId
+  }
+
+  for line in StrSplit(section, "`n", "`r") {
+    line := Trim(line)
+    if (line = "" || SubStr(line, 1, 1) = ";" || SubStr(line, 1, 1) = "#")
+      continue
+
+    parts := StrSplit(line, "=", , 2)
+    if (parts.Length < 2)
+      continue
+
+    name := Trim(parts[1])
+    id   := Trim(parts[2])
+
+    if (id = weaponId)
+      return name
+  }
+
+  return weaponId
 }
 
 Profiles_ParseSteps(profileText) {
@@ -17,7 +53,6 @@ Profiles_ParseSteps(profileText) {
     if (SubStr(line, 1, 1) = ";" || SubStr(line, 1, 1) = "#")
       continue
 
-    ; retire commentaire fin de ligne
     semi := InStr(line, ";")
     if (semi)
       line := Trim(SubStr(line, 1, semi - 1))
