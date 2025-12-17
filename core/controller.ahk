@@ -12,7 +12,7 @@ Controller_OnShootDown(*) {
 
   State["Shooting"] := true
 
-  SetTimer(Controller_RunPattern, -0)
+  SetTimer(Controller_RunPattern, -1)
   UI_Update()
 }
 
@@ -32,30 +32,29 @@ Controller_RunPattern() {
 
       dx := step["dx"] * State["Modifier"]
       dy := step["dy"] * State["Modifier"]
+
       SmoothMouseMoveRel(dx, dy, State["Smoothness"])
 
-      delay := step["delay"]
-      if (delay > 0) {
-        slept := 0
-        while (slept < delay && State["Shooting"]) {
-          chunk := Min(15, delay - slept)
-          Sleep chunk
-          slept += chunk
-        }
-      }
+      if (step["delay"] > 0)
+        Sleep step["delay"]
     }
   }
 }
 
-SmoothMouseMoveRel(dx, dy, smoothness := 0.7) {
-  smoothness := Max(0.05, Min(1.0, smoothness))
 
-  steps := Round(6 + (1.0 - smoothness) * 18)  ; 6..24
+SmoothMouseMoveRel(dx, dy, smoothness) {
+  steps := 3
   stepX := dx / steps
   stepY := dy / steps
 
   Loop steps {
-    MouseMove stepX, stepY, 0, "R"  ; relatif
-    Sleep 1
+      dx -= stepX
+      dy -= stepY
+      DllCall("mouse_event", "UInt", 0x01
+          , "Int", Round(dx)
+          , "Int", Round(dy)
+          , "UInt", 0
+          , "UPtr", 0)
+      Sleep smoothness
   }
 }
