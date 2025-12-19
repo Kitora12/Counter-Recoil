@@ -22,6 +22,8 @@ UI_Create() {
   UIc["Profile"] := UI.AddText("w260 y+4", "")
   UIc["Profile"].SetFont("s8 cC8C8C")
 
+  
+  UIc["WeaponImg"] := UI.AddPicture("w110 h40 y+8 BackgroundTrans", "")
   UI.AddText("w260 y+8 c808080", "Double-click: ON/OFF  •  Drag: move")
 
   UI.OnEvent("Close", (*) => ExitApp())
@@ -62,8 +64,31 @@ UI_Update() {
 
   UIc["Status"].Text := (enabled ? "ON" : "OFF") "  -  " weaponName
 
-  if enabled
-    UIc["Status"].SetFont("c7CFC00")
-  else
+  if (!enabled || weaponId = "Off") {
     UIc["Status"].SetFont("cD0D0D0")
+  } else {
+    UIc["Status"].SetFont("c7CFC00")
+  }
+
+  if (weaponId = "Off") {
+    UIc["WeaponImg"].Value := ""
+  } else {
+    UIc["WeaponImg"].Value := WeaponImagePathByDisplayName(weaponName)
+  }
+}
+
+WeaponImagePathByDisplayName(displayName) {
+  assetsDir := A_ScriptDir "\assets\"
+  stem := NormalizeFileStem(displayName)
+
+  p := assetsDir stem ".png"
+  if FileExist(p)
+    return p
+  return ""
+}
+
+NormalizeFileStem(s) {
+  s := StrLower(Trim(s))
+  s := StrReplace(s, " ", "")  ; optionnel
+  return RegExReplace(s, '[\\/:*?"<>|]', "")
 }
