@@ -2,9 +2,9 @@
   <img src="assets/logo.png" alt="Counter Recoil logo" width="220">
 </p>
 
-# Counter Recoil
+<h1 align="center">Counter Recoil</h1>
 
-A simple AutoHotkey No Recoil for CS2 using configurable profiles and hotkeys.
+A simple AutoHotkey No Recoil / Trigger Bot for CS2 using configurable profiles and hotkeys.
 
 > ⚠️ **Work in Progress**
 
