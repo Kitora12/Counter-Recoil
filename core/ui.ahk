@@ -4,7 +4,6 @@ global UI := unset
 global UIc := Map()
 
 OnMessage(0x0201, UI_WM_LBUTTONDOWN)
-OnMessage(0x0203, UI_WM_LBUTTONDBLCLK)
 
 UI_Create() {
   global UI, UIc
@@ -22,9 +21,10 @@ UI_Create() {
   UIc["Profile"] := UI.AddText("w260 y+4", "")
   UIc["Profile"].SetFont("s8 cC8C8C")
 
-  
   UIc["WeaponImg"] := UI.AddPicture("w110 h40 y+8 BackgroundTrans", "")
-  UI.AddText("w260 y+8 c808080", "Double-click: ON/OFF  •  Drag: move")
+  
+  UIc["TriggerStatus"] := UI.AddText("w260 y+6", "")
+  UIc["TriggerStatus"].SetFont("s8")
 
   UI.OnEvent("Close", (*) => ExitApp())
 
@@ -42,25 +42,14 @@ UI_WM_LBUTTONDOWN(wParam, lParam, msg, hwnd) {
   PostMessage(0xA1, 2, 0, , "ahk_id " hwnd)
 }
 
-UI_WM_LBUTTONDBLCLK(wParam, lParam, msg, hwnd) {
-  global UI
-  if !IsSet(UI)
-    return
-  if (hwnd != UI.Hwnd)
-    return
-
-  ToggleEnabled()
-}
-
 UI_Update() {
   global State, UI, UIc
   if !IsSet(UI)
     return
 
-  enabled := State["Enabled"]
-  weaponId := State["ActiveWeapon"]
+  enabled := State.Has("Enabled") ? State["Enabled"] : false
+  weaponId := State.Has("ActiveWeapon") ? State["ActiveWeapon"] : "Off"
   weaponName := (weaponId = "Off") ? "Off" : Profiles_DisplayName(weaponId)
-  size := StrLen(State["ActiveProfile"])
 
   UIc["Status"].Text := (enabled ? "ON" : "OFF") "  -  " weaponName
 
@@ -74,6 +63,37 @@ UI_Update() {
     UIc["WeaponImg"].Value := ""
   } else {
     UIc["WeaponImg"].Value := WeaponImagePathByDisplayName(weaponName)
+  }
+
+  UI_UpdateTriggerStatus()
+}
+
+UI_UpdateTriggerStatus() {
+  global UIc
+  try {
+    global Trigger
+    if !IsObject(Trigger) {
+      UIc["TriggerStatus"].Text := "Trigger: N/A"
+      UIc["TriggerStatus"].SetFont("c808080")
+      return
+    }
+
+    cEnabled := Trigger.Has("Enabled") ? Trigger["Enabled"] : false
+    trig := Trigger.Has("TriggerKey") ? Trigger["TriggerKey"] : "?"
+    tog  := Trigger.Has("ToggleKey") ? Trigger["ToggleKey"] : ""
+
+    UIc["TriggerStatus"].Text := "Trigger: " (cEnabled ? "ON" : "OFF")
+      . "  •  Hold: " trig
+      . (tog != "" ? "  •  Toggle: " tog : "")
+
+    if (cEnabled) {
+      UIc["TriggerStatus"].SetFont("c7CFC00")
+    } else {
+      UIc["TriggerStatus"].SetFont("cD0D0D0")
+    }
+  } catch {
+    UIc["TriggerStatus"].Text := "Trigger: N/A"
+    UIc["TriggerStatus"].SetFont("c808080")
   }
 }
 
@@ -89,6 +109,6 @@ WeaponImagePathByDisplayName(displayName) {
 
 NormalizeFileStem(s) {
   s := StrLower(Trim(s))
-  s := StrReplace(s, " ", "")  ; optionnel
+  s := StrReplace(s, " ", "")
   return RegExReplace(s, '[\\/:*?"<>|]', "")
 }

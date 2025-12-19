@@ -10,11 +10,13 @@ App_Start() {
   State["Shooting"] := false
 
   Bindings_Apply()
+  Trigger_InitFromIni(A_ScriptDir "\config\config.ini")
   UI_Create()
 }
 
 App_Reload() {
   Bindings_Apply()
+  Trigger_InitFromIni(A_ScriptDir "\config\config.ini")
   TrayTip("Counter", "Hotkeys reloaded.", 1)
   UI_Update()
 }
