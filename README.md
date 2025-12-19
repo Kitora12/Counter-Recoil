@@ -93,6 +93,66 @@ shoot=LButton
 ExitKey=End
 ```
 
+# Pixel Trigger Bot
+
+A **pixel-based trigger Bot** is included.
+It automatically performs a click when a brightness change is detected at the cursor position.
+
+The trigger module is **independent from weapon profiles** and can be enabled or disabled separately.
+
+---
+
+## Trigger keybinds
+
+Edit `config/config.ini`:
+
+```ini
+[KeyBinds]
+TriggerKey=X
+ToggleKey=F6
+```
+
+* `TriggerKey`
+  Key to **hold** in order to activate the trigger
+
+* `ToggleKey`
+  Toggles the trigger module ON / OFF
+
+---
+
+## Trigger settings
+
+Trigger parameters are stored in the `[Settings]` section of `config/config.ini`:
+
+```ini
+[Settings]
+luminanceThreshold=1.0
+offsetX=1
+offsetY=1
+fireDelayMin=5
+fireDelayMax=25
+checkInterval=1
+whiteIgnoreThreshold=200
+```
+
+### Parameter description
+
+* `luminanceThreshold`
+  Minimum brightness change required to trigger a click
+
+* `offsetX`, `offsetY`
+  Pixel offset from the cursor position
+
+* `fireDelayMin`, `fireDelayMax`
+  Random delay range (in milliseconds) before clicking
+
+* `checkInterval`
+  Time between pixel checks (milliseconds)
+
+* `whiteIgnoreThreshold`
+  Ignores very bright pixels to reduce false positives
+
+
 ## Disclaimer
 
 This cheat is provided for educational purposes only. Use it at your own risk and do not use it in official game environments.
